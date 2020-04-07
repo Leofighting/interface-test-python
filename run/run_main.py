@@ -7,6 +7,7 @@ import os
 import unittest
 
 from base.base_request import b_request
+from util.handle_cookie import get_cookie_value, write_cookie
 from util.handle_excel import excel_data
 from util.handle_result import handle_result, handle_result_json, get_result_json
 
@@ -15,8 +16,11 @@ base_path = os.path.dirname(os.getcwd())
 
 class RunMain:
     def run_case(self, index=None):
+
         rows = excel_data.get_rows(index)
         for i in range(2, rows + 1):
+            cookie = None
+            get_cookie = None
             data = excel_data.get_row_value(i)
             is_run = data[2]
 
@@ -26,7 +30,17 @@ class RunMain:
                 data1 = data[6]
                 expect_method = data[8]
                 expect_result = data[9]
-                res = b_request.run_main(method=method, url=url, data=data1)
+                cookie_method = data[7]
+                print(cookie_method)
+
+                if cookie_method == "yes":
+                    cookie = get_cookie_value("app")
+
+                if cookie_method == "write":
+                    get_cookie = {"is_cookie": "app"}
+
+                res = b_request.run_main(method=method, url=url, data=data1, cookie=cookie, get_cookie=get_cookie)
+
                 code = str(res["errorCode"])
                 message = res["errorDesc"]
 
