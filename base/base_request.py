@@ -5,6 +5,9 @@ import json
 
 import requests
 
+from util.handle_ini import handle_ini
+from util.handle_json import handle_json
+
 
 class BaseRequest:
 
@@ -17,6 +20,11 @@ class BaseRequest:
         return res
 
     def run_main(self, method, url, data):
+        # return handle_json.get_value(url)
+        base_url = handle_ini.get_value("host")
+        if "http" not in url:
+            url = base_url + url
+        print(url)
         if method == "get":
             res = self.send_get(url, data)
         else:
@@ -30,3 +38,7 @@ class BaseRequest:
 
 
 b_request = BaseRequest()
+
+if __name__ == '__main__':
+    b_request = BaseRequest()
+    b_request.run_main("get", "login", '{"username": "user1111"}')
